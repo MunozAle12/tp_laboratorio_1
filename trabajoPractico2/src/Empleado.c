@@ -66,20 +66,29 @@ int emp_getEmptyIndex(Empleado* array,int limite)
  * \return Retorna 0 (EXITO) y -1 (ERROR)
  *
  */
-int emp_addEmployee(Empleado* array,int limite,int indice,int* idEmpleado)
+int emp_addEmployee(Empleado* array,int limite,int* idEmpleado)
 {
-	int respuesta = -1;
-	if(array != NULL && limite > 0 && indice < limite && idEmpleado != NULL)
+	int respuesta = -1; //valor de retorno si los parametros recibidos no son válidos
+	int auxiliarIndice;
+	Empleado auxiliarEmpleado;
+	if(array != NULL && limite > 0)
 	{
-		if(	!utn_getNombre(array[indice].nombre, NOMBRE_LEN, "Ingrese nombre: \n", "\nNOMBRE INVALIDO. ",2) &&
-			!utn_getApellido(array[indice].apellido,APELLIDO_LEN,"Ingrese apellido: \n","\nAPELLIDO NO VALIDO. ",2) &&
-			!utn_getNumeroFlotante(&array[indice].salario,"Ingrese salario: \n","\nSALARIO INVALIDO. ",15000.00,32767.00,2) &&
-			!utn_getNumero(&array[indice].sector,"Ingrese sector: \n","\nSECTOR INVALIDO. ",1,20,2) )
+		respuesta = -2; //valor de retorno si no hay lugar disponible para agregar un empleado
+		auxiliarIndice = emp_getEmptyIndex(array,limite);
+		if(auxiliarIndice != -1)
 		{
-			respuesta = 0;
-			array[indice].isEmpty = 0;
-			array[indice].id = *idEmpleado;
-			(*idEmpleado)++;
+			respuesta = -3; //valor de retorno si se ingresó al menos un dato inválido
+			if(	!utn_getNombre(auxiliarEmpleado.nombre, NOMBRE_LEN, "Ingrese nombre: \n", "\nNOMBRE INVALIDO. ",2) &&
+				!utn_getApellido(auxiliarEmpleado.apellido,APELLIDO_LEN,"Ingrese apellido: \n","\nAPELLIDO NO VALIDO. ",2) &&
+				!utn_getNumeroFlotante(&auxiliarEmpleado.salario,"Ingrese salario: \n","\nSALARIO INVALIDO. ",15000.00,32767.00,2) &&
+				!utn_getNumero(&auxiliarEmpleado.sector,"Ingrese sector: \n","\nSECTOR INVALIDO. ",1,20,2) )
+			{
+				respuesta = 0; //valor de retorno si se agregó un empleado
+				auxiliarEmpleado.isEmpty = 0;
+				auxiliarEmpleado.id = *idEmpleado;
+				array[auxiliarIndice] = auxiliarEmpleado;
+				(*idEmpleado)++;
+			}
 		}
 	}
 	return respuesta;
@@ -92,69 +101,81 @@ int emp_addEmployee(Empleado* array,int limite,int indice,int* idEmpleado)
  * \return Retorna 0 (EXITO) y -1 (ERROR)
  *
  */
-int emp_modifyEmployee(Empleado* array,int limite,int indice)
+int emp_modifyEmployee(Empleado* array,int limite,int proximoId)
 {
-	int respuesta = -1;
+	int respuesta = -1; //valor de retorno si los parametros recibidos no son válidos
+	int auxiliarId;
+	int auxiliarIndice;
 	int opcion;
-	if(array != NULL && limite > 0 && indice < limite)
-	do
+	if(array != NULL && limite > 0 && proximoId >= 0)
 	{
-		if(!utn_getNumero(&opcion,"Ingrese opción para modificar dato:\n"
-								  "1.Nombre\n"
-								  "2.Apellido\n"
-								  "3.Salario\n"
-								  "4.Sector\n","\nOPCION INVALIDA. ",1,4,2) )
+		respuesta = -2; //valor de retorno si no hay empleados cargados
+		if(!emp_findLoadedEmployees(array,limite))
 		{
-			switch(opcion)
+			respuesta = -3; //valor de retorno si hubo un ingreso de id invalido
+			if(!utn_getNumero(&auxiliarId,"Ingrese ID de empleado: \n","\nID INVALIDO. ",0,proximoId,2))
 			{
-				case 1:
-					if(!utn_getNombre(array[indice].nombre, NOMBRE_LEN, "Modifique nombre: \n", "\nNOMBRE INVALIDO. ",2))
+				respuesta = -4; //valor de retorno si no existe el id ingresado
+				auxiliarIndice = emp_findEmployeeById(array,limite,auxiliarId);
+				if(auxiliarIndice != -1)
+				{
+					do
 					{
-						respuesta = 0;
-						printf("\nSe modificó el nombre con éxito.\n");
-					}
-					else
-					{
-						printf("\nSe agotaron sus reitentos. Ingreso incorrecto.\n");
-					}
-					break;
-				case 2:
-					if(!utn_getApellido(array[indice].apellido,APELLIDO_LEN,"Modifique apellido: \n","\nAPELLIDO INVALIDO. ",2))
-					{
-						respuesta = 0;
-						printf("\nSe modificó el apellido con éxito.\n");
-					}
-					else
-					{
-						printf("\nSe agotaron sus reitentos. Ingreso incorrecto.\n");
-					}
-					break;
-				case 3:
-					if(!utn_getNumeroFlotante(&array[indice].salario,"Modifique salario: \n","\nSALARIO INVALIDO. ",15000.00,32767.00,2))
-					{
-						respuesta = 0;
-						printf("\nSe modificó el salario con éxito.\n");
-					}
-					else
-					{
-						printf("\nSe agotaron sus reitentos. Ingreso incorrecto.\n");
-					}
-					break;
-				case 4:
-					if(!utn_getNumero(&array[indice].sector,"Ingrese sector: \n","\nSECTOR INVALIDO. ",1,20,2))
-					{
-						respuesta = 0;
-						printf("\nSe modificó el sector con éxito.\n");
-					}
-					else
-					{
-						respuesta = 0;
-						printf("\nSe agotaron sus reitentos. Ingreso incorrecto.\n");
-					}
-					break;
+						if(!utn_getNumero(&opcion,"Ingrese opción para modificar dato:\n"
+												  "1) Nombre\n"
+												  "2) Apellido\n"
+												  "3) Salario\n"
+												  "4) Sector\n","\nOPCION INVALIDA. ",1,4,2) )
+						{
+							switch(opcion)
+							{
+								case 1:
+									if(!utn_getNombre(array[auxiliarIndice].nombre, NOMBRE_LEN, "Modifique nombre: \n", "\nNOMBRE INVALIDO. ",2))
+									{
+										respuesta = 0; //valor de retorno si se modifico dato con éxito
+									}
+									else
+									{
+										respuesta = -5; //valor de retorno si se ingresó dato invalido al querer modificar
+									}
+									break;
+								case 2:
+									if(!utn_getApellido(array[auxiliarIndice].apellido,APELLIDO_LEN,"Modifique apellido: \n","\nAPELLIDO INVALIDO. ",2))
+									{
+										respuesta = 0;
+									}
+									else
+									{
+										respuesta = -5;
+									}
+									break;
+								case 3:
+									if(!utn_getNumeroFlotante(&array[auxiliarIndice].salario,"Modifique salario: \n","\nSALARIO INVALIDO. ",15000.00,32767.00,2))
+									{
+										respuesta = 0;
+									}
+									else
+									{
+										respuesta = -5;
+									}
+									break;
+								case 4:
+									if(!utn_getNumero(&array[auxiliarIndice].sector,"Ingrese sector: \n","\nSECTOR INVALIDO. ",1,20,2))
+									{
+										respuesta = 0;
+									}
+									else
+									{
+										respuesta = -5;
+									}
+									break;
+							}
+						}
+					}while(opcion < 1 || opcion > 4);
+				}
 			}
 		}
-	}while(opcion < 1 || opcion > 4);
+	}
 	return respuesta;
 }
 /**
@@ -175,12 +196,12 @@ int emp_findLoadedEmployees(Empleado* array,int limite)
 			if(array[i].isEmpty != 1)
 			{
 				respuesta = 0;
+				break;
 			}
 		}
 	}
 	return respuesta;
 }
-
 /**
  * \brief Busca y verifica si existe o no un ID en un array
  * \param array Array de empleados a ser analizado
@@ -215,13 +236,28 @@ int emp_findEmployeeById(Empleado* array,int limite,int valorBuscado)
  * \return Retorna 0 (EXITO) y -1 (ERROR)
  *
  */
-int emp_removeEmployee(Empleado* array,int limite,int indice)
+int emp_removeEmployee(Empleado* array,int limite,int proximoId)
 {
-	int respuesta = -1;
-	if(array != NULL && limite > 0 && indice < limite)
+	int respuesta = -1; //valor de retorno si los parámetros recibidos son invalidos
+	int auxiliarId;
+	int auxiliarIndice;
+	if(array != NULL && limite > 0 && proximoId >= 0)
 	{
-		respuesta = 0;
-		array[indice].isEmpty = 1;
+		respuesta = -2; //valor de retorno si no hay empleados cargados
+		if(!emp_findLoadedEmployees(array,limite))
+		{
+			respuesta = -3; //valor de retorno si hubo un ingreso de id invalido
+			if(!utn_getNumero(&auxiliarId,"Ingrese ID de empleado: \n","\nID INVALIDO. ",0,proximoId,2))
+			{
+				respuesta = -4; //valor de retorno si no existe el id ingresado
+				auxiliarIndice = emp_findEmployeeById(array,limite,auxiliarId);
+				if(auxiliarIndice != -1)
+				{
+					respuesta = 0; ////valor de retorno si se eliminó empleado de la lista
+					array[auxiliarIndice].isEmpty = 1;
+				}
+			}
+		}
 	}
 	return respuesta;
 }

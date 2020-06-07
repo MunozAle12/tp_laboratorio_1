@@ -25,11 +25,11 @@ int emp_printEmployee(Empleado* pElemento);
 int emp_printEmployees(Empleado* array,int limite);
 int emp_initEmployees(Empleado* array,int limite);
 int emp_getEmptyIndex(Empleado* array,int limite);
-int emp_addEmployee(Empleado* array,int limite,int indice,int* idEmpleado);
-int emp_modifyEmployee(Empleado* array,int limite,int indice);
+int emp_addEmployee(Empleado* array,int limite,int* idEmpleado);
+int emp_modifyEmployee(Empleado* array,int limite,int proximoId);
 int emp_findLoadedEmployees(Empleado* array,int limite);
 int emp_findEmployeeById(Empleado* array,int limite,int valorBuscado);
-int emp_removeEmployee(Empleado* array,int limite,int indice);
+int emp_removeEmployee(Empleado* array,int limite,int proximoId);
 int emp_calculateSalary(Empleado* array,int limite,float* pSalarioTotal,float* pSalarioPromedio);
 int emp_calculateEmployeesExceedAverageSalary(Empleado* array,int limite,float promedio,int* pCantidadEmpleados);
 

@@ -22,7 +22,6 @@ static int info_sortEmployees(Empleado* array,int limite);
 int info_reportEmployeesList(Empleado* array, int limite)
 {
 	int respuesta = -1;
-
 	if(info_sortEmployees(array,limite) != -1)
 	{
 		respuesta = 0;
