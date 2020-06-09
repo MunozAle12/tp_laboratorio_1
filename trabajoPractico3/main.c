@@ -1,12 +1,11 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "LinkedList.h"
-#include "Controller.h"
-#include "Employee.h"
-#include "utn.h"
-
-/****************************************************
-
+/*
+ ============================================================================
+ Name        : trabajoPractico3.c
+ Author      : Alejandro Muñoz
+ Version     : Original
+ Copyright   : Your copyright notice
+ Description : Hello World in C, Ansi-style
+ ============================================================================
 	Menu:
 	1. Cargar los datos de los empleados desde el archivo data.csv (modo texto).
 	2. Cargar los datos de los empleados desde el archivo data.csv (modo binario).
@@ -18,9 +17,15 @@
 	8. Guardar los datos de los empleados en el archivo data.csv (modo texto).
 	9. Guardar los datos de los empleados en el archivo data.csv (modo binario).
 	10. Salir
+ ============================================================================
+*/
 
-*****************************************************/
-
+#include <stdio.h>
+#include <stdlib.h>
+#include "LinkedList.h"
+#include "Controller.h"
+#include "Employee.h"
+#include "utn.h"
 
 int main()
 {
@@ -41,7 +46,7 @@ int main()
 									"7) Ordenar empleados\n"
 									"8) Guardar datos de los empleados en archivo 'data.csv' (modo texto)\n"
 									"9) Guardar datos de los empleados en archivo 'data.csv' (modo binario)\n"
-									"10) Salir\n","\nOPCION INVALIDA.",1,10,2) )
+									"10) Salir\n","\nOPCION INVALIDA. ",1,10,2) )
 		{
 			switch(option)
 			{
@@ -59,7 +64,7 @@ int main()
 							printf("\nERROR. NO SE PUDO CREAR EMPLEADO EN MEMORIA.\n");
 							break;
 						case -4:
-							printf("\nERROR. EL PUNTERO A LA LISTA ES NULL.\n");
+							printf("\nERROR. NO SE PUDO AGREGAR EMPLEADO A LA LISTA.\n");
 							break;
 						default:
 							printf("\nSE CARGARON DATOS DESDE ARCHIVO CON ÉXITO.\n");
@@ -80,7 +85,7 @@ int main()
 							printf("\nERROR. NO SE PUDO CREAR EMPLEADO EN MEMORIA.\n");
 							break;
 						case -4:
-							printf("\nERROR. EL PUNTERO A LA LISTA ES NULL.\n");
+							printf("\nERROR. NO SE PUDO AGREGAR EMPLEADO A LA LISTA.\n");
 							break;
 						default:
 							printf("\nSE CARGARON DATOS DESDE ARCHIVO CON ÉXITO.\n");
@@ -102,10 +107,10 @@ int main()
 							printf("\nERROR. SE INGRESÓ AL MENOS UN DATO INVALIDO\n");
 							break;
 						case -3:
-							printf("\nERROR. NO SE PUDO AGREGAR EMPLEADO\n");
+							printf("\nERROR. NO SE PUDO CREAR EMPLEADO EN MEMORIA.\n");
 							break;
 						case -4:
-							printf("\nERROR. EL PUNTERO A LA LISTA ES NULL\n");
+							printf("\nERROR. NO SE PUDO AGREGAR EMPLEADO A LA LISTA.\n");
 							break;
 					}
 					break;

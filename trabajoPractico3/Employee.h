@@ -1,3 +1,10 @@
+/*
+ * Employee.h
+ *
+ *  Created on: 3 jun. 2020
+ *      Author: Usuario
+ */
+
 #ifndef employee_H_INCLUDED
 #define employee_H_INCLUDED
 #define NOMBRE_LEN 128
@@ -38,6 +45,9 @@ int employee_getSueldoTxt(Employee* this,char* sueldo);
 
 /********************************************************************************/
 
+int employee_sortById(void* itemA,void* itemB);
 int employee_sortByNombre(void* itemA,void* itemB);
+int employee_sortByHorasTrabajadas(void* itemA,void* itemB);
+int employee_sortBySueldo(void* itemA,void* itemB);
 
 #endif // employee_H_INCLUDED
