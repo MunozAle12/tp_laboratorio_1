@@ -6,9 +6,10 @@
 
 /** \brief Parsea los datos los datos de los empleados desde el archivo data.csv (modo texto).
  *
- * \param path char*
- * \param pArrayListEmployee LinkedList*
- * \return int
+ * \param pFile Puntero al archivo que se desea leer.
+ * \param pArrayListEmployee Puntero al espacio de memoria donde comienza la lista de empleados.
+ * \return Retorna un valor tipo int mayor o igual a 0 que indica el proximo id disponible,
+ * 		   -3 si no se pudo reservar espacio en memoria para un empleado.
  *
  */
 int parser_EmployeeFromText(FILE* pFile,LinkedList* pArrayListEmployee)
@@ -27,13 +28,10 @@ int parser_EmployeeFromText(FILE* pFile,LinkedList* pArrayListEmployee)
 			pAuxiliarEmpleado = employee_newParametrosTxt(auxiliarId,auxiliarNombre,auxiliarHorasTrabajadas,auxiliarSueldo);
 			if(pAuxiliarEmpleado != NULL)
 			{
-				respuesta = -4; //valor de retorno si el puntero a la lista es null
-				if(!ll_add(pArrayListEmployee,pAuxiliarEmpleado))
+				ll_add(pArrayListEmployee,pAuxiliarEmpleado);
+				if(atoi(auxiliarId) >= proximoId)
 				{
-					if(atoi(auxiliarId) >= proximoId)
-					{
-						proximoId = atoi(auxiliarId) + 1;
-					}
+					proximoId = atoi(auxiliarId) + 1;
 				}
 			}
 		}
@@ -49,9 +47,10 @@ int parser_EmployeeFromText(FILE* pFile,LinkedList* pArrayListEmployee)
 
 /** \brief Parsea los datos los datos de los empleados desde el archivo data.csv (modo binario).
  *
- * \param path char*
- * \param pArrayListEmployee LinkedList*
- * \return int
+ * \param pFile Puntero al archivo que se desea leer.
+ * \param pArrayListEmployee Puntero al espacio de memoria donde comienza la lista de empleados.
+ * \return Retorna un valor tipo int mayor o igual a 0 que indica el proximo id disponible,
+ * 		   -3 si no se pudo reservar espacio en memoria para un empleado.
  *
  */
 int parser_EmployeeFromBinary(FILE* pFile,LinkedList* pArrayListEmployee)
@@ -70,15 +69,16 @@ int parser_EmployeeFromBinary(FILE* pFile,LinkedList* pArrayListEmployee)
 														auxiliarEmpleado.sueldo );
 			if(pAuxiliarEmpleado != NULL)
 			{
-				respuesta = -4; //valor de retorno si el puntero a la lista es null
-				if(!ll_add(pArrayListEmployee,pAuxiliarEmpleado))
+				ll_add(pArrayListEmployee,pAuxiliarEmpleado);
+				if(auxiliarEmpleado.id >= proximoId)
 				{
-					if(auxiliarEmpleado.id >= proximoId)
-					{
-						proximoId = auxiliarEmpleado.id + 1;
-					}
+					proximoId = auxiliarEmpleado.id + 1;
 				}
 			}
+		}
+		else
+		{
+			break;
 		}
 	}while(!feof(pFile));
 	fclose(pFile);

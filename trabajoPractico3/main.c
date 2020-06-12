@@ -84,9 +84,6 @@ int main()
 						case -3:
 							printf("\nERROR. NO SE PUDO CREAR EMPLEADO EN MEMORIA.\n");
 							break;
-						case -4:
-							printf("\nERROR. NO SE PUDO AGREGAR EMPLEADO A LA LISTA.\n");
-							break;
 						default:
 							printf("\nSE CARGARON DATOS DESDE ARCHIVO CON ÉXITO.\n");
 							proximoId = retorno;
@@ -108,9 +105,6 @@ int main()
 							break;
 						case -3:
 							printf("\nERROR. NO SE PUDO CREAR EMPLEADO EN MEMORIA.\n");
-							break;
-						case -4:
-							printf("\nERROR. NO SE PUDO AGREGAR EMPLEADO A LA LISTA.\n");
 							break;
 					}
 					break;

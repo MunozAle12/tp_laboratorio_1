@@ -22,7 +22,7 @@ int controller_loadFromText(char* path,LinkedList* pArrayListEmployee)
 	{
 		respuesta = -2;	//valor de retorno si hubo error al abrir el archivo
 		fpArchivo = fopen(path,"r");
-		if(fpArchivo != NULL)
+		if(fpArchivo != NULL)	//¿Esta verificación está repetida?
 		{
 			respuesta = parser_EmployeeFromText(fpArchivo,pArrayListEmployee); //valor de retorno que indica el proximo ID
 		}
@@ -60,7 +60,7 @@ int controller_loadFromBinary(char* path , LinkedList* pArrayListEmployee)
  * \param pArrayListEmployee Puntero a la posición de memoria donde comienza la lista de empleados.
  * \param id Valor del identificador a asignar al empleado
  * \return Retorna 0 si se pudo dar de alta a empleado, -1 si los parametros no son válidos, -2 si se ingresó
- *		   al menos un dato inválido, -3 si no se pudo agregar empleado, -4 si no se pudo agregar empleado a la lista
+ *		   al menos un dato inválido, -3 si no se pudo agregar empleado.
  *
  */
 int controller_addEmployee(LinkedList* pArrayListEmployee,int id)
@@ -81,11 +81,8 @@ int controller_addEmployee(LinkedList* pArrayListEmployee,int id)
 			pAuxiliarEmpleado = employee_newParametros(id,auxiliarNombre,auxiliarHorasTrabajadas,auxiliarSueldo);
 			if(pAuxiliarEmpleado != NULL)
 			{
-				respuesta = -4; //valor de error si el puntero a la lista es null
-				if(!ll_add(pArrayListEmployee,pAuxiliarEmpleado))
-				{
-					respuesta = 0; //valor de retorno si se pudo dar de alta a empleado
-				}
+				ll_add(pArrayListEmployee,pAuxiliarEmpleado);
+				respuesta = 0;
 			}
 		}
 	}
@@ -180,7 +177,7 @@ int controller_removeEmployee(LinkedList* pArrayListEmployee,int proximoId)
 			{
 				respuesta = -3; //valor de retorno si el puntero a la lista es NULL o el indice es erroneo
 				pAuxiliarEmpleado = (Employee*)ll_get(pArrayListEmployee,i);
-				if(pAuxiliarEmpleado != NULL) //VALIDACIÓN QUE NO SE PODRÍA HACER
+				if(pAuxiliarEmpleado != NULL) //VALIDACIÓN QUE NO SE PODRÍA HACER?
 				{
 					respuesta = -4; //valor de retorno si no se obtuvo ID
 					if(!employee_getId(pAuxiliarEmpleado,&auxiliarId))
@@ -188,9 +185,9 @@ int controller_removeEmployee(LinkedList* pArrayListEmployee,int proximoId)
 						if(idBuscado == auxiliarId)
 						{
 							respuesta = -5; //valor de retorno si el puntero a la lista es null o el indice es erroneo
+							employee_delete(pAuxiliarEmpleado);
 							if(!ll_remove(pArrayListEmployee,i))
 							{
-								employee_delete(pAuxiliarEmpleado);
 								respuesta = 0; //valor de retorno si se elimino el empleado
 								break;
 							}
@@ -240,12 +237,47 @@ int controller_ListEmployee(LinkedList* pArrayListEmployee)
 int controller_sortEmployee(LinkedList* pArrayListEmployee)
 {
 	int respuesta = -1;
+	int opcionOrden;
+	int opcionCriterio;
     if(pArrayListEmployee != NULL)
     {
-		if(!ll_sort(pArrayListEmployee,employee_sortByHorasTrabajadas,1))
-		{
-			respuesta = 0;
-		}
+    	if( !utn_getNumero(&opcionOrden,"Para establecer el orden, elija una opción:\n"
+    									"1) Orden ascendente\n"
+    									"0) Orden descendente\n","\nINGRESO INVÁLIDO. ",0,1,2) &&
+    		!utn_getNumero(&opcionCriterio,"Para establecer un criterio, elija una opción:\n"
+    									   "1) Ordenar por ID\n"
+    									   "2) Ordenar por nombre\n"
+    									   "3) Ordenar por horas trabajadas\n"
+    									   "4) Ordenar por sueldo\n","\nINGRESO INVÁLIDO. ",1,4,2) )
+    	{
+    		switch(opcionCriterio)
+    		{
+				case 1:
+					if(!ll_sort(pArrayListEmployee,employee_sortById,opcionOrden))
+					{
+						respuesta = 0;
+					}
+					break;
+				case 2:
+					if(!ll_sort(pArrayListEmployee,employee_sortByNombre,opcionOrden))
+					{
+						respuesta = 0;
+					}
+					break;
+				case 3:
+					if(!ll_sort(pArrayListEmployee,employee_sortByHorasTrabajadas,opcionOrden))
+					{
+						respuesta = 0;
+					}
+					break;
+				case 4:
+					if(!ll_sort(pArrayListEmployee,employee_sortBySueldo,opcionOrden))
+					{
+						respuesta = 0;
+					}
+					break;
+    		}
+    	}
     }
 	return respuesta;
 }
@@ -293,6 +325,7 @@ int controller_saveAsText(char* path,LinkedList* pArrayListEmployee)
 	}
     return respuesta;
 }
+
 /** \brief Guarda los datos de los empleados en el archivo data.csv (modo binario).
  *
  * \param path Puntero al espacio de memoria donde comienza la cadena que hace referencia al archivo.

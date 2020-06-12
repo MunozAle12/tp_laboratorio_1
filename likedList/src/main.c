@@ -26,8 +26,9 @@
 
 int main(void)
 {
+	setbuf(stdout,NULL);
 	startTesting(1);  // ll_newLinkedList
- /* startTesting(2);  // ll_len
+	startTesting(2);  // ll_len
 	startTesting(3);  // getNode - test_getNode
 	startTesting(4);  // addNode - test_addNode
 	startTesting(5);  // ll_add
@@ -35,7 +36,7 @@ int main(void)
 	startTesting(7);  // ll_set
 	startTesting(8);  // ll_remove
 	startTesting(9);  // ll_clear
-	startTesting(10); // ll_deleteLinkedList
+/*	startTesting(10); // ll_deleteLinkedList
 	startTesting(11); // ll_indexOf
 	startTesting(12); // ll_isEmpty
 	startTesting(13); // ll_push
@@ -48,36 +49,3 @@ int main(void)
 
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

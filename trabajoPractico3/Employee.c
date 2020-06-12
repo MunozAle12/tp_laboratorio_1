@@ -376,6 +376,7 @@ int employee_getSueldoTxt(Employee* this,char* sueldo)
 }
 
 /*****************************************************************************************************************/
+
 /**
  * \brief esNumerica Verifica si la cadena ingresada es un id válido
  * \param cadena Puntero a espacio de memoria donde guarda la cadena de caracteres a ser analizada
@@ -401,6 +402,7 @@ static int isValidId(char* cadena, int limite)
 	}
 	return retorno;
 }
+
 /**
  * \brief Verifica si la cadena ingresada es un nombre válido
  * \param cadena Cadena de caracteres a ser analizada
@@ -444,6 +446,7 @@ static int isValidNombre(char* cadena,int longitud)
 	}
 	return retorno;
 }
+
 /**
  * \brief Verifica si la cadena ingresada es una hora válida
  * \param cadena Puntero a espacio de memoria donde guarda la cadena de caracteres a ser analizada
@@ -469,6 +472,7 @@ static int isValidHoras(char* cadena, int limite)
 	}
 	return retorno;
 }
+
 /**
  * \brief Verifica si la cadena ingresada es un sueldo válido
  * \param cadena Puntero a espacio de memoria donde guarda la cadena de caracteres a ser analizada
