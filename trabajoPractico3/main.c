@@ -55,7 +55,7 @@ int main()
 					switch(retorno)
 					{
 						case -1:
-							printf("\nERROR. LOS PARAMETROS NO SON VALIDOS\n");
+							printf("\nERROR. LOS PARAMETROS NO SON VALIDOS O LA LISTA ESTÁ VACÍA.\n");
 							break;
 						case -2:
 							printf("\nERROR AL ABRIR EL ARCHIVO.\n");
@@ -76,7 +76,7 @@ int main()
 					switch(retorno)
 					{
 						case -1:
-							printf("\nERROR. LOS PARAMETROS NO SON VALIDOS\n");
+							printf("\nERROR. LOS PARAMETROS NO SON VALIDOS O LA LISTA ESTÁ VACÍA.\n");
 							break;
 						case -2:
 							printf("\nERROR AL ABRIR EL ARCHIVO.\n");
@@ -98,10 +98,10 @@ int main()
 							proximoId++;
 							break;
 						case -1:
-							printf("\nERROR. LOS PARAMETROS NO SON VÁLIDOS\n");
+							printf("\nERROR. LOS PARAMETROS NO SON VÁLIDOS O LA LISTA ESTÁ VACÍA.\n");
 							break;
 						case -2:
-							printf("\nERROR. SE INGRESÓ AL MENOS UN DATO INVALIDO\n");
+							printf("\nERROR. SE INGRESÓ AL MENOS UN DATO INVALIDO.\n");
 							break;
 						case -3:
 							printf("\nERROR. NO SE PUDO CREAR EMPLEADO EN MEMORIA.\n");
@@ -116,22 +116,16 @@ int main()
 							printf("\nSE MODIFICÓ EMPLEADO CON ÉXITO.\n");
 							break;
 						case -1:
-							printf("\nERROR. LOS PARAMETROS NO SON VÁLIDOS.\n");
+							printf("\nERROR. LOS PARAMETROS NO SON VÁLIDOS O LA LISTA ESTÁ VACÍA.\n");
 							break;
 						case -2:
-							printf("\nSE ACABARON SUS REINTENTOS. ID INVALIDO.\n");
+							printf("\nERROR. NO SE ENCONTRÓ EMPLEADO EN LA LISTA.\n");
 							break;
 						case -3:
-							printf("\nERROR. EL PUNTERO A LA LISTA ES NULL O EL INDICE ES ERRONEO.\n");
+							printf("\nERROR. SE INGRESÓ AL MENOS UN DATO INVÁLIDO.\n");
 							break;
 						case -4:
-							printf("\nERROR. NO SE OBTUVO ID.\n");
-							break;
-						case -5:
-							printf("\nERROR. SE INGRESO AL MENOS UN DATO INVALIDO.\n");
-							break;
-						case -6:
-							printf("\nERROR. NO SE LOGRÓ ASIGNAR AL MENOS UN DATO A UN CAMPO DEL EMPLEADO.\n");
+							printf("\nERROR. NO SE LOGRÓ ASIGNAR AL MENOS UN DATO A UN CAMPO DE LA ENTIDAD.\n");
 							break;
 					}
 					break;
@@ -143,26 +137,17 @@ int main()
 						printf("\nLA BAJA DEL EMPLEADO SE REALIZÓ CON ÉXITO.\n");
 						break;
 					case -1:
-						printf("\nERROR. LOS PARAMETROS NO SON VÁLIDOS.\n");
+						printf("\nERROR. LOS PARAMETROS NO SON VÁLIDOS O LA LISTA ESTÁ VACÍA.\n");
 						break;
 					case -2:
-						printf("\nSE ACABARON SUS REINTENTOS. ID INVALIDO.\n");
-						break;
-					case -3:
-						printf("\nERROR. EL PUNTERO A LA LISTA ES NULL O EL INDICE ES ERRONEO.\n");
-						break;
-					case -4:
-						printf("\nERROR. NO SE OBTUVO ID.\n");
-						break;
-					case -5:
-						printf("\nERROR. EL PUNTERO A LA LISTA ES NULL O EL INDICE ES ERRONEO.\n");
+						printf("\nERROR. NO SE ENCONTRÓ EMPLEADO EN LA LISTA.\n");
 						break;
 					}
 					break;
 				case 6: //6) Listar empleados
 					if(controller_ListEmployee(listaEmpleados) == -1)
 					{
-						printf("\nERROR.\n");
+						printf("\nERROR. LOS PARAMETROS NO SON VÁLIDOS O LA LISTA ESTÁ VACÍA.\n");
 					}
 					break;
 				case 7: //7) Ordenar empleados
@@ -173,7 +158,7 @@ int main()
 							controller_ListEmployee(listaEmpleados);
 							break;
 						case -1:
-							printf("\nERROR.\n");
+							printf("\nERROR. LOS PARAMETROS NO SON VÁLIDOS O LA LISTA ESTÁ VACÍA.\n");
 							break;
 					}
 					break;
@@ -185,7 +170,7 @@ int main()
 						printf("\nSE GUARDARON EMPLEADOS AL ARCHIVO CON ÉXITO.\n");
 						break;
 					case -1:
-						printf("\nERROR. LOS PARAMETROS NO SON VALIDOS\n");
+						printf("\nERROR. LOS PARAMETROS NO SON VÁLIDOS O LA LISTA ESTÁ VACÍA.\n");
 						break;
 					case -2:
 						printf("\nERROR AL ABRIR EL ARCHIVO\n");
@@ -200,7 +185,7 @@ int main()
 						printf("\nSE GUARDARON EMPLEADOS AL ARCHIVO CON ÉXITO.\n");
 						break;
 					case -1:
-						printf("\nERROR. LOS PARAMETROS NO SON VALIDOS\n");
+						printf("\nERROR. LOS PARAMETROS NO SON VÁLIDOS O LA LISTA ESTÁ VACÍA.\n");
 						break;
 					case -2:
 						printf("\nERROR AL ABRIR EL ARCHIVO\n");

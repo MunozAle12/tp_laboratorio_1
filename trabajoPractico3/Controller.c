@@ -10,8 +10,7 @@
  * \param path Puntero al espacio de memoria donde comienza la cadena que hace referencia al nombre del archivo.
  * \param pArrayListEmployee Puntero al espacio de memoria donde comienza la lista de empleados.
  * \return Retorna el valor que indica el próximo ID, -1 si los parametros recibidos no son válidos,
- * 		   -2 si hubo error al abrir el archivo, -3 si se pudo crear empleado en memoria,
- * 		   -4 si hubo error al agregar empleado a la lista.
+ * 		   -2 si hubo error al abrir el archivo, -3 si se pudo crear empleado en memoria.
  *
  */
 int controller_loadFromText(char* path,LinkedList* pArrayListEmployee)
@@ -22,7 +21,7 @@ int controller_loadFromText(char* path,LinkedList* pArrayListEmployee)
 	{
 		respuesta = -2;	//valor de retorno si hubo error al abrir el archivo
 		fpArchivo = fopen(path,"r");
-		if(fpArchivo != NULL)	//¿Esta verificación está repetida?
+		if(fpArchivo != NULL)	//¿ES REDUNDANTE ESTA VERIFICACIÓN?
 		{
 			respuesta = parser_EmployeeFromText(fpArchivo,pArrayListEmployee); //valor de retorno que indica el proximo ID
 		}
@@ -35,8 +34,7 @@ int controller_loadFromText(char* path,LinkedList* pArrayListEmployee)
  * \param path Puntero al espacio de memoria donde comienza la cadena que hace referencia al nombre del archivo.
  * \param pArrayListEmployee Puntero al espacio de memoria donde comienza la lista de empleados.
  * \return Retorna el valor que indica el próximo ID, -1 si los parametros recibidos no son válidos,
- * 		   -2 si hubo error al abrir el archivo, -3 si se pudo crear empleado en memoria,
- * 		   -4 si hubo error al agregar empleado a la lista.
+ * 		   -2 si hubo error al abrir el archivo, -3 si se pudo crear empleado en memoria.
  *
  */
 int controller_loadFromBinary(char* path , LinkedList* pArrayListEmployee)
@@ -47,7 +45,7 @@ int controller_loadFromBinary(char* path , LinkedList* pArrayListEmployee)
 	{
 		respuesta = -2; //valor de retorno si hubo error al abrir el archivo
 		fpArchivo = fopen(path,"rb");
-		if(fpArchivo != NULL)
+		if(fpArchivo != NULL)	//¿ES REDUNDANTE ESTA VERIFICACIÓN?
 		{
 			respuesta = parser_EmployeeFromBinary(fpArchivo,pArrayListEmployee); //valor de retorno que indica el proximo ID
 		}
@@ -59,8 +57,8 @@ int controller_loadFromBinary(char* path , LinkedList* pArrayListEmployee)
  *
  * \param pArrayListEmployee Puntero a la posición de memoria donde comienza la lista de empleados.
  * \param id Valor del identificador a asignar al empleado
- * \return Retorna 0 si se pudo dar de alta a empleado, -1 si los parametros no son válidos, -2 si se ingresó
- *		   al menos un dato inválido, -3 si no se pudo agregar empleado.
+ * \return Retorna 0 si se pudo dar de alta a empleado, -1 si los parametros no son válidos o la lista está vacía,´
+ * 		   -2 si se ingresó al menos un dato inválido, -3 si no se pudo crear empleado en memoria.
  *
  */
 int controller_addEmployee(LinkedList* pArrayListEmployee,int id)
@@ -70,12 +68,10 @@ int controller_addEmployee(LinkedList* pArrayListEmployee,int id)
 	char auxiliarNombre[NOMBRE_LEN];
 	int auxiliarHorasTrabajadas;
 	int auxiliarSueldo;
-	if(pArrayListEmployee != NULL && id > 0)
+	if(pArrayListEmployee != NULL && id >= 0 && ll_len(pArrayListEmployee) > 0)
 	{
 		respuesta = -2; //valor de error si se ingresó al menos un ingreso de dato invalido
-		if( !utn_getNombre(auxiliarNombre,NOMBRE_LEN,"\nIngrese nombre: ","\n\nINGRESO INVALIDO.",2) &&
-			!utn_getNumero(&auxiliarHorasTrabajadas,"\nIngrese horas trabajadas: ","\n\nINGRESO INVALIDO.",0,999,2) &&
-			!utn_getNumero(&auxiliarSueldo,"\nIngrese sueldo: ","\n\nINGRESO INVALIDO.",0,999999,2) )
+		if(!employee_requestEmployeeData(auxiliarNombre,&auxiliarHorasTrabajadas,&auxiliarSueldo))
 		{
 			respuesta = -3; //valor de error si no se pudo agregar empleado en memoria
 			pAuxiliarEmpleado = employee_newParametros(id,auxiliarNombre,auxiliarHorasTrabajadas,auxiliarSueldo);
@@ -93,56 +89,32 @@ int controller_addEmployee(LinkedList* pArrayListEmployee,int id)
  *
  * \param pArrayListEmployee Puntero al espacio de memoria donde comienza la lista de empleados.
  * \param proximoId Valor del próximo ID a corresponder a empleado.
- * \return Retorna 0 si se logró modificar el empleado deseado, -5 si se ingresó al menos un dato invalido,
- *		   -4 si no se obtuvo ID, -3 si el puntero a la lista es NULL o el indice es erroneo,
- *		   -2 si se ingresó ID invalido, -1 si los parametros no son válidos.
+ * \return Retorna 0 si se logró modificar el empleado deseado, -4 si no se logró asignar al menos un dato
+ * 		   a un campo en la entidad, -3 si se ingresó al menos un dato invalido, 2 si no se encontró empleado,
+ * 		   -1 si los parametros no son válidos o la lista está vacía.
  *
  */
 int controller_editEmployee(LinkedList* pArrayListEmployee,int proximoId)
 {
 	int respuesta = -1; //valor de retorno si los parametros no son válidos
-	int idBuscado;
-	int auxiliarId;
-	int i;
-	int auxiliarLenLista;
 	Employee* pAuxiliarEmpleado;
 	char auxiliarNombre[NOMBRE_LEN];
 	int auxiliarHorasTrabajadas;
 	int auxiliarSueldo;
-	if(pArrayListEmployee != NULL && proximoId >= 0)
+	if(pArrayListEmployee != NULL && proximoId >= 0 && ll_len(pArrayListEmployee) > 0)
 	{
-		respuesta = -2; //valor de retorno si se ingresó ID invalido
-		if(!utn_getNumero(&idBuscado," \nIngresar ID de empleado a modificar: ","\n\nINGRESO INVALIDO.",0,proximoId,2))
+		respuesta = -2; //valor de retorno si no se encontró empleado
+		if(employee_findEmployeeById(pArrayListEmployee,&pAuxiliarEmpleado,proximoId) >= 0)
 		{
-			auxiliarLenLista = ll_len(pArrayListEmployee);
-			for(i=0; i<auxiliarLenLista; i++)
+			respuesta = -3; //valor de retorno si se ingresó al menos un dato invalido
+			if(!employee_requestEmployeeData(auxiliarNombre,&auxiliarHorasTrabajadas,&auxiliarSueldo))
 			{
-				respuesta = -3; //valor de retorno si el puntero a la lista es NULL o el indice es erroneo
-				pAuxiliarEmpleado = (Employee*)ll_get(pArrayListEmployee,i);
-				if(pAuxiliarEmpleado != NULL) //VALIDACIÓN QUE NO SE PODRÍA HACER
+				respuesta = -4; // valor de retorno si no se logró asignar al menos un dato a un campo en la entidad
+				if( !employee_setNombre(pAuxiliarEmpleado,auxiliarNombre) &&
+					!employee_setHorasTrabajadas(pAuxiliarEmpleado,auxiliarHorasTrabajadas) &&
+					!employee_setSueldo(pAuxiliarEmpleado,auxiliarSueldo) )
 				{
-					respuesta = -4; //valor de retorno si no se obtuvo ID
-					if(!employee_getId(pAuxiliarEmpleado,&auxiliarId))
-					{
-						if(idBuscado == auxiliarId)
-						{
-							respuesta = -5; //valor de retorno si se ingresó al menos un dato invalido
-							if( !utn_getNombre(auxiliarNombre,NOMBRE_LEN,"\nIngrese nombre: ","\n\nINGRESO INVALIDO.",2) &&
-								!utn_getNumero(&auxiliarHorasTrabajadas,"\nIngrese horas trabajadas: ","\n\nINGRESO INVALIDO.",0,999,2) &&
-								!utn_getNumero(&auxiliarSueldo,"\nIngrese sueldo: ","\n\nINGRESO INVALIDO.",0,999999,2) )
-							{
-								respuesta = -6; // valor de retorno si no se logró asignar al menos un dato a un campo en la entidad
-								if( !employee_setNombre(pAuxiliarEmpleado,auxiliarNombre) &&
-									!employee_setHorasTrabajadas(pAuxiliarEmpleado,auxiliarHorasTrabajadas) &&
-									!employee_setSueldo(pAuxiliarEmpleado,auxiliarSueldo))
-								{
-									respuesta = 0; //valor de retorno si se logró modificar el empleado deseado
-									break;
-								}
-							}
-
-						}
-					}
+					respuesta = 0; //valor de retorno si se logró modificar el empleado deseado
 				}
 			}
 		}
@@ -154,47 +126,24 @@ int controller_editEmployee(LinkedList* pArrayListEmployee,int proximoId)
  *
  * \param pArrayListEmployee Puntero al espacio de memoria donde comienza la lista de empleados.
  * \param proximoId Valor del próximo ID a corresponder a empleado.
- * \return Retorna 0 si se elimino el empleado deseado, -5 si el puntero a la lista es null o el
- * 		   indice es erroneo, -4 si no se obtuvo ID, -3 si el puntero a la lista es NULL o el indice
- * 		   es erroneo, -2 si se ingresó ID invalido, -1 si los parametros no son válidos.
+ * \return Retorna 0 si se elimino el empleado deseado, -2 si no se encontró empleado en la lista,
+ * 		   -1 si los parametros no son válidos o la lista está vacía.
  *
  */
 int controller_removeEmployee(LinkedList* pArrayListEmployee,int proximoId)
 {
 	int respuesta = -1; //valor de retorno si los parametros no son válidos
-	int idBuscado;
-	int auxiliarLenLista;
-	int i;
+	int indexDelete;
 	Employee* pAuxiliarEmpleado;
-	int auxiliarId;
-	if(pArrayListEmployee != NULL && proximoId >= 0)
+	if(pArrayListEmployee != NULL && proximoId >= 0 && ll_len(pArrayListEmployee) > 0)
 	{
-		respuesta = -2; //valor de retorno si se ingresó ID invalido
-		if(!utn_getNumero(&idBuscado,"\nIngresar ID de empleado a dar de baja: ","\n\nINGRESO INVALIDO.",0,proximoId,2))
+		respuesta = -2; //valor de retorno si no se encontró empleado en la lista
+		indexDelete = employee_findEmployeeById(pArrayListEmployee,&pAuxiliarEmpleado,proximoId);
+		if(indexDelete >= 0)
 		{
-			auxiliarLenLista = ll_len(pArrayListEmployee);
-			for(i=0; i<auxiliarLenLista; i++)
-			{
-				respuesta = -3; //valor de retorno si el puntero a la lista es NULL o el indice es erroneo
-				pAuxiliarEmpleado = (Employee*)ll_get(pArrayListEmployee,i);
-				if(pAuxiliarEmpleado != NULL) //VALIDACIÓN QUE NO SE PODRÍA HACER?
-				{
-					respuesta = -4; //valor de retorno si no se obtuvo ID
-					if(!employee_getId(pAuxiliarEmpleado,&auxiliarId))
-					{
-						if(idBuscado == auxiliarId)
-						{
-							respuesta = -5; //valor de retorno si el puntero a la lista es null o el indice es erroneo
-							employee_delete(pAuxiliarEmpleado);
-							if(!ll_remove(pArrayListEmployee,i))
-							{
-								respuesta = 0; //valor de retorno si se elimino el empleado
-								break;
-							}
-						}
-					}
-				}
-			}
+			employee_delete(pAuxiliarEmpleado);
+			ll_remove(pArrayListEmployee,indexDelete);
+			respuesta = 0; //valor de retorno si se elimino el empleado
 		}
 	}
     return respuesta;
@@ -212,7 +161,7 @@ int controller_ListEmployee(LinkedList* pArrayListEmployee)
 	int auxiliarLenLista;
 	Employee* pAuxiliarEmpleado;
 	int i;
-	if(pArrayListEmployee != NULL)
+	if(pArrayListEmployee != NULL && ll_len(pArrayListEmployee) > 0)
 	{
 		respuesta = 0;
 		auxiliarLenLista = ll_len(pArrayListEmployee);
@@ -231,15 +180,15 @@ int controller_ListEmployee(LinkedList* pArrayListEmployee)
 /** \brief Ordenar empleados
  *
  * \param pArrayListEmployee Puntero a espacio de memoria donde comienza la lista de empleados.
- * \return Retorna 0 si se logró ordenar empleados, -1 si error.
+ * \return Retorna 0 si se logró ordenar empleados, -1 si los parametros no son válidos o la lista esta vacía.
  *
  */
 int controller_sortEmployee(LinkedList* pArrayListEmployee)
 {
-	int respuesta = -1;
+	int respuesta = -2;
 	int opcionOrden;
 	int opcionCriterio;
-    if(pArrayListEmployee != NULL)
+    if(pArrayListEmployee != NULL && ll_len(pArrayListEmployee) > 0)
     {
     	if( !utn_getNumero(&opcionOrden,"Para establecer el orden, elija una opción:\n"
     									"1) Orden ascendente\n"
@@ -253,28 +202,16 @@ int controller_sortEmployee(LinkedList* pArrayListEmployee)
     		switch(opcionCriterio)
     		{
 				case 1:
-					if(!ll_sort(pArrayListEmployee,employee_sortById,opcionOrden))
-					{
-						respuesta = 0;
-					}
+					respuesta = ll_sort(pArrayListEmployee,employee_sortById,opcionOrden);
 					break;
 				case 2:
-					if(!ll_sort(pArrayListEmployee,employee_sortByNombre,opcionOrden))
-					{
-						respuesta = 0;
-					}
+					respuesta = ll_sort(pArrayListEmployee,employee_sortByNombre,opcionOrden);
 					break;
 				case 3:
-					if(!ll_sort(pArrayListEmployee,employee_sortByHorasTrabajadas,opcionOrden))
-					{
-						respuesta = 0;
-					}
+					respuesta = ll_sort(pArrayListEmployee,employee_sortByHorasTrabajadas,opcionOrden);
 					break;
 				case 4:
-					if(!ll_sort(pArrayListEmployee,employee_sortBySueldo,opcionOrden))
-					{
-						respuesta = 0;
-					}
+					respuesta = ll_sort(pArrayListEmployee,employee_sortBySueldo,opcionOrden);
 					break;
     		}
     	}
@@ -287,7 +224,7 @@ int controller_sortEmployee(LinkedList* pArrayListEmployee)
  * \param path Puntero al espacio de memoria donde comienza la cadena que hace referencia al archivo.
  * \param pArrayListEmployee Puntero al espacio de memoria donde comienza la lista de empleados.
  * \return Retorna 0 si se guardó datos de empleados en modo texto, -2 si hubo error al abrir el archivo,
- * 		   -1 si los parametros recibidos no son válidos.
+ * 		   -1 si los parametros recibidos no son válidos o la lista está vacía.
  *
  */
 int controller_saveAsText(char* path,LinkedList* pArrayListEmployee)
@@ -301,7 +238,7 @@ int controller_saveAsText(char* path,LinkedList* pArrayListEmployee)
 	char auxiliarNombre[NOMBRE_LEN];
 	int auxiliarHorasTrabajadas;
 	int auxiliarSueldo;
-	if(path != NULL && pArrayListEmployee != NULL)
+	if(path != NULL && pArrayListEmployee != NULL && ll_len(pArrayListEmployee) > 0)
 	{
 		respuesta = -2; //valor de retorno si hubo error al abrir el archivo
 		fpArchivo = fopen(path,"w");
@@ -331,7 +268,7 @@ int controller_saveAsText(char* path,LinkedList* pArrayListEmployee)
  * \param path Puntero al espacio de memoria donde comienza la cadena que hace referencia al archivo.
  * \param pArrayListEmployee Puntero al espacio de memoria donde comienza la lista de empleados.
  * \return Retorna 0 si se guardó datos de empleados en modo texto, -2 si hubo error al abrir el archivo,
- * 		   -1 si los parametros recibidos no son válidos.
+ * 		   -1 si los parametros recibidos no son válidos o la lista esta vacía.
  *
  */
 int controller_saveAsBinary(char* path,LinkedList* pArrayListEmployee)
@@ -341,7 +278,7 @@ int controller_saveAsBinary(char* path,LinkedList* pArrayListEmployee)
 	int i;
 	int auxiliarLenLista;
 	Employee* pAuxiliarEmpleado;
-	if(path != NULL && pArrayListEmployee != NULL)
+	if(path != NULL && pArrayListEmployee != NULL && ll_len(pArrayListEmployee) > 0)
 	{
 		respuesta = -2;
 		fpArchivo = fopen(path,"wb");

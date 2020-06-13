@@ -7,6 +7,7 @@
 
 #ifndef employee_H_INCLUDED
 #define employee_H_INCLUDED
+#include "LinkedList.h"
 #define NOMBRE_LEN 128
 
 typedef struct
@@ -45,6 +46,8 @@ int employee_getSueldoTxt(Employee* this,char* sueldo);
 
 /********************************************************************************/
 
+int employee_findEmployeeById(LinkedList* pArrayListEmployee,Employee** pEmpleado,int proximoId);
+int employee_requestEmployeeData(char* nombre,int* horasTrabajadas,int* sueldo);
 int employee_sortById(void* itemA,void* itemB);
 int employee_sortByNombre(void* itemA,void* itemB);
 int employee_sortByHorasTrabajadas(void* itemA,void* itemB);

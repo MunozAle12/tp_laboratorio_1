@@ -3,6 +3,7 @@
 #include <string.h>
 #include "Employee.h"
 #include "LinkedList.h"
+#include "utn.h"
 
 static int isValidId(char* cadena, int limite);
 static int isValidNombre(char* cadena,int longitud);
@@ -499,6 +500,77 @@ static int isValidSueldo(char* cadena, int limite)
 	return retorno;
 }
 /*****************************************************************************************************************/
+/**
+ * \brief Busca por ID un empleado y luego de verificar si existe en la lista pasa por referencia el puntero al mismo.
+ *
+ * \param pArrayListEmployee Puntero al espacio de memoria donde comienza la lista de empleados.
+ * \param pEmpleado Puntero al espacio de memoria donde se pasará por referencia la ubicacion en memoria del empleado buscado.
+ * \param proximoId Valor del proximo ID a ser asignado a un empleado.
+ * \return Retorna un valor entero mayor o igual a 0 indicando la posicion del empleado en la lista. Retorna una valor entero
+ * 		   negativo si hubo error.
+ *
+ */
+int employee_findEmployeeById(LinkedList* pArrayListEmployee,Employee** pEmpleado,int proximoId)
+{
+	int respuesta = -3; //valor de retorno si los parámetros recibidos son invalidos
+	int idBuscado;
+	int auxiliarLenLista;
+	int i;
+	int auxiliarId;
+	Employee* pAuxiliarEmpleado;
+	if(pArrayListEmployee != NULL && pEmpleado != NULL && proximoId >= 0) // <-- ¿ES REDUNDANTE ESTA VERIFICACIÓN?
+	{
+		respuesta = -4; //valor de retorno si se ingresó ID invalido
+		if(!utn_getNumero(&idBuscado," \nIngresar ID de empleado: ","\n\nINGRESO INVALIDO.",0,proximoId,2))
+		{
+			auxiliarLenLista = ll_len(pArrayListEmployee);
+			for(i=0; i<auxiliarLenLista; i++)
+			{
+				respuesta = -5; //valor de retorno si el puntero a la lista es NULL o el indice es erroneo
+				pAuxiliarEmpleado = (Employee*)ll_get(pArrayListEmployee,i);
+				if( pAuxiliarEmpleado != NULL && // <-- ¿ES NECESARIO ESTA VERIFICACIÓN?
+					!employee_getId(pAuxiliarEmpleado,&auxiliarId) &&
+					idBuscado == auxiliarId )
+				{
+					*pEmpleado = pAuxiliarEmpleado;
+					respuesta = i; //valor de retorno que indica la posición del empleado en la lista
+					break;
+				}
+			}
+		}
+	}
+	return respuesta;
+}
+
+/**
+ * \brief Solicita ingreso de datos del empleado.
+ *
+ * \param nombre Puntero al espacio de memoria donde comienza el array al que se le pasara por referencia un nombre.
+ * \param horasTrabajadas Puntero al espacio de memoria donde se pasara por referencia las horas trabajadas.
+ * \param sueldo Puntero al espacio de memoria donde se pasara por referencia el sueldo.
+ * \return Retorna 0 si se ingresaron datos correctamente, -1 si se ingresó al menos un dato inválido.
+ *
+ */
+int employee_requestEmployeeData(char nombre[],int* horasTrabajadas,int* sueldo)
+{
+	int respuesta = -1; //valor de retorno si se ingresó al menos un dato invalido
+	char auxiliarNombre[NOMBRE_LEN];
+	int auxiliarHorasTrabajadas;
+	int auxiliarSueldo;
+	if(nombre != NULL && horasTrabajadas != NULL && sueldo != NULL)
+	{
+		if( !utn_getNombre(auxiliarNombre,NOMBRE_LEN,"\nIngrese nombre: ","\n\nINGRESO INVALIDO.",2) &&
+			!utn_getNumero(&auxiliarHorasTrabajadas,"\nIngrese horas trabajadas: ","\n\nINGRESO INVALIDO.",0,999,2) &&
+			!utn_getNumero(&auxiliarSueldo,"\nIngrese sueldo: ","\n\nINGRESO INVALIDO.",0,999999,2) )
+		{
+			strncpy(nombre,auxiliarNombre,NOMBRE_LEN);
+			*horasTrabajadas = auxiliarHorasTrabajadas;
+			*sueldo = auxiliarSueldo;
+			respuesta = 0; //valor de retorno si se ingresaron datos correctamente
+		}
+	}
+	return respuesta;
+}
 
 /**
  * \brief Ordena empleados por id.
