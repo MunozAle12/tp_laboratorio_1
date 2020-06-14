@@ -25,6 +25,7 @@ int controller_loadFromText(char* path,LinkedList* pArrayListEmployee)
 		{
 			respuesta = parser_EmployeeFromText(fpArchivo,pArrayListEmployee); //valor de retorno que indica el proximo ID
 		}
+		fclose(fpArchivo);
 	}
     return respuesta;
 }
@@ -49,6 +50,7 @@ int controller_loadFromBinary(char* path , LinkedList* pArrayListEmployee)
 		{
 			respuesta = parser_EmployeeFromBinary(fpArchivo,pArrayListEmployee); //valor de retorno que indica el proximo ID
 		}
+		fclose(fpArchivo);
 	}
     return respuesta;
 }

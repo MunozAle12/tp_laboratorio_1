@@ -40,7 +40,6 @@ int parser_EmployeeFromText(FILE* pFile,LinkedList* pArrayListEmployee)
 			break;
 		}
 	}while(!feof(pFile));
-	fclose(pFile);
 	respuesta = proximoId;
 	return respuesta;
 }
@@ -81,7 +80,6 @@ int parser_EmployeeFromBinary(FILE* pFile,LinkedList* pArrayListEmployee)
 			break;
 		}
 	}while(!feof(pFile));
-	fclose(pFile);
 	respuesta = proximoId;
     return respuesta;
 }

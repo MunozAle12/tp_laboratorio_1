@@ -35,8 +35,8 @@ int main(void)
 	startTesting(6);  // ll_get
 	startTesting(7);  // ll_set
 	startTesting(8);  // ll_remove
-	startTesting(9);  // ll_clear
-/*	startTesting(10); // ll_deleteLinkedList
+/*	startTesting(9);  // ll_clear
+	startTesting(10); // ll_deleteLinkedList
 	startTesting(11); // ll_indexOf
 	startTesting(12); // ll_isEmpty
 	startTesting(13); // ll_push
