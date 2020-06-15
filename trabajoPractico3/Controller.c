@@ -21,7 +21,7 @@ int controller_loadFromText(char* path,LinkedList* pArrayListEmployee)
 	{
 		respuesta = -2;	//valor de retorno si hubo error al abrir el archivo
 		fpArchivo = fopen(path,"r");
-		if(fpArchivo != NULL)	//¿ES REDUNDANTE ESTA VERIFICACIÓN?
+		if(fpArchivo != NULL)
 		{
 			respuesta = parser_EmployeeFromText(fpArchivo,pArrayListEmployee); //valor de retorno que indica el proximo ID
 		}
@@ -46,7 +46,7 @@ int controller_loadFromBinary(char* path , LinkedList* pArrayListEmployee)
 	{
 		respuesta = -2; //valor de retorno si hubo error al abrir el archivo
 		fpArchivo = fopen(path,"rb");
-		if(fpArchivo != NULL)	//¿ES REDUNDANTE ESTA VERIFICACIÓN?
+		if(fpArchivo != NULL)
 		{
 			respuesta = parser_EmployeeFromBinary(fpArchivo,pArrayListEmployee); //valor de retorno que indica el proximo ID
 		}
