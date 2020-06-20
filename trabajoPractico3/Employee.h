@@ -53,4 +53,6 @@ int employee_sortByNombre(void* itemA,void* itemB);
 int employee_sortByHorasTrabajadas(void* itemA,void* itemB);
 int employee_sortBySueldo(void* itemA,void* itemB);
 
+int employee_listEmployee(void* pElement); //NUEVO
+
 #endif // employee_H_INCLUDED

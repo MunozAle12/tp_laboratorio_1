@@ -145,10 +145,15 @@ int main()
 					}
 					break;
 				case 6: //6) Listar empleados
-					if(controller_ListEmployee(listaEmpleados) == -1)
+					if(ll_map(listaEmpleados,employee_listEmployee) == -1)
 					{
 						printf("\nERROR. LOS PARAMETROS NO SON VÁLIDOS O LA LISTA ESTÁ VACÍA.\n");
 					}
+					/*
+					if(controller_ListEmployee(listaEmpleados) == -1)
+					{
+						printf("\nERROR. LOS PARAMETROS NO SON VÁLIDOS O LA LISTA ESTÁ VACÍA.\n");
+					}*/
 					break;
 				case 7: //7) Ordenar empleados
 					retorno = controller_sortEmployee(listaEmpleados);

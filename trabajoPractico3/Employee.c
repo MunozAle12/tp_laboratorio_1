@@ -713,3 +713,116 @@ int employee_sortBySueldo(void* itemA,void* itemB)
 	}
 	return respuesta;
 }
+int ll_map(LinkedList* this, int (*pFuncGenerica)(void*)) //NUEVO
+{
+	int respuesta = -1;
+	void* pElement = NULL;
+	int indexElement;
+	if(this != NULL && pFuncGenerica != NULL)
+	{
+		respuesta = 0;
+		for(indexElement=0; indexElement<this->size; indexElement++)
+		{
+			pElement = ll_get(this,indexElement);
+			if(pElement != NULL)
+			{
+				if(pFuncGenerica(pElement) < 0)
+				{
+					respuesta = -1;
+				}
+			}
+		}
+	}
+	return respuesta;
+}
+
+/** \brief Listar empleados
+ *
+ * \param pArrayListEmployee Puntero a espacio de memoria donde comienza la lista de empleados.
+ * \return Retorna 0 si se logró imprimir lista de empleados, -1 si error.
+ *
+ */
+int employee_listEmployee(void* pElement) //NUEVO
+{
+	int respuesta = -1;
+	Employee* pAuxiliarEmpleado = (Employee*)pElement;
+	if(pElement != NULL)
+	{
+		respuesta = 0;
+		printf("ID: %d - NOMBRE: %s - HORAS DE TRABAJO: %d - SUELDO: %d\n",pAuxiliarEmpleado->id,
+																		   pAuxiliarEmpleado->nombre,
+																		   pAuxiliarEmpleado->horasTrabajadas,
+																		   pAuxiliarEmpleado->sueldo);
+	}
+    return respuesta;
+}
+
+/**
+ *
+ *
+ */
+LinkedList* ll_filter(LinkedList* this, int (*pFuncFilterBy)(void*))
+{
+	LinkedList* listaFiltrada;
+	int indexListOriginal;
+	void* pElement = NULL;
+	if(this != NULL)
+	{
+		listaFiltrada = ll_newLinkedList();
+		if(listaFiltrada != NULL)
+		{
+			for(indexListOriginal=0; indexListOriginal<this->size; indexListOriginal++)
+			{
+				pElement = ll_get(this,indexListOriginal);
+				if(elEmpleadoTrabajaMasDe8Horas(pElement))
+				{
+					ll_add(listaFiltrada,pElement);
+				}
+			}
+		}
+	}
+	return listaFiltrada;
+}
+
+/**
+ *
+ *
+ */
+int elEmpleadoTrabajaMasDe8Horas(void* pElement)
+{
+	int respuesta = 0;
+	Employee* pAuxiliarEmpleado = (Employee*)pElement;
+	if(pElement != NULL)
+	{
+		if(pAuxiliarEmpleado->horasTrabajadas > 8)
+		{
+			respuesta = 1;
+		}
+	}
+	return respuesta;
+}
+
+/**
+ *
+ *
+ */
+int ll_count(LinkedList* this, int (*pFuncCountBy)(void*))
+{
+	int respuesta = 0;
+	void* pElement = NULL;
+	int indexList;
+	int contador = 0;
+	if(this != NULL)
+	{
+		for(indexList=0; indexList<this->size; indexList++)
+		{
+			pElement = ll_get(this,indexList);
+			if( pElement != NULL &&
+				elEmpleadoTrabajaMasDe8Horas(pElement) )
+			{
+				contador++;
+			}
+		}
+	}
+	return respuesta;
+}
