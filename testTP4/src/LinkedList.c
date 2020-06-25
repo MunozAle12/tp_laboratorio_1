@@ -1,7 +1,14 @@
+/*
+ * LinkedList.c
+ *
+ *  Created on: 20 jun. 2020
+ *      Author: Usuario
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../inc/LinkedList.h"
+#include "LinkedList.h"
 
 static Node* getNode(LinkedList* this, int nodeIndex);
 static int addNode(LinkedList* this, int nodeIndex,void* pElement);
@@ -218,7 +225,6 @@ int ll_remove(LinkedList* this, int index)
     Node* auxNode = NULL;
     if(this != NULL && index >= 0 && index < this->size)
     {
-    	returnAux = 0;
 		deleteNode = getNode(this,index);
 		if(deleteNode != NULL)
 		{
@@ -234,6 +240,7 @@ int ll_remove(LinkedList* this, int index)
 	    		auxNode->pNextNode = deleteNode->pNextNode;
 	    		free(deleteNode);
 	    	}
+	    	returnAux = 0;
 		}
     }
     return returnAux;
@@ -251,7 +258,6 @@ int ll_clear(LinkedList* this)
     int returnAux = -1;
     if(this != NULL)
     {
-    	returnAux = 0;
     	if(ll_len(this) > 0)
     	{
     		do
@@ -259,6 +265,7 @@ int ll_clear(LinkedList* this)
         		ll_remove(this,this->size-1);
     		}while(this->size != 0);
     	}
+    	returnAux = 0;
     }
     return returnAux;
 }
@@ -277,8 +284,8 @@ int ll_deleteLinkedList(LinkedList* this)
     {
     	if(!ll_clear(this))
     	{
-        	returnAux = 0;
         	free(this);
+        	returnAux = 0;
     	}
     }
     return returnAux;
@@ -430,7 +437,7 @@ int ll_containsAll(LinkedList* this,LinkedList* this2)
 	if(this != NULL && this2 != NULL)
 	{
 		returnAux = 0;
-		auxNodeList2 = this2->pFirstNode;
+		auxNodeList2 = this2->pFirstNode;	//TOMO EL NODO EN LA POSICIÓN 0 DE LA LISTA 2 COMO PUNTO DE PARTIDA
 		if(auxNodeList2 != NULL)
 		{
 			returnAux = 1;
@@ -572,4 +579,153 @@ int ll_sort(LinkedList* this, int (*pFunc)(void* ,void* ), int order)
     	}while(flagSwap == 1);
     }
     return returnAux;
+}
+
+/**
+ * \brief Recorre la lista, analizando cada elemento para que se realice una tarea.
+ *
+ * \this Puntero al espacio de memoria donde se empieza la lista.
+ * \pFuncGenerica Puntero al espacio de memoria donde comienza el código de dicha función.
+ * \return Retorna -1 los parametros recibidos son NULL o si al menos un elemento no cumple con el criterio establecido.
+ * 				   Retorna 0 si ok.
+ *
+ */
+int ll_map(LinkedList* this, int (*pFuncGenerica)(void*)) //NUEVO
+{
+	int respuesta = -1;
+	void* pElement = NULL;
+	int indexElement;
+	if(this != NULL && pFuncGenerica != NULL)
+	{
+		respuesta = 0;
+		for(indexElement=0; indexElement<this->size; indexElement++)
+		{
+			pElement = ll_get(this,indexElement);
+			if(pFuncGenerica(pElement) < 0)
+			{
+				respuesta = -1;
+			}
+		}
+	}
+	return respuesta;
+}
+
+/**
+ * \brief Recorre una lista, analiza y filtra cada elemento que cumpla con un criterio para luego agregarlo a una lista.
+ *
+ * \param this Puntero al espacio de memoria donde se empieza la lista.
+ * \param pFuncFilterBy Puntero al espacio de memoria donde comienza el código de dicha función que filtra la lista por un criterio.
+ * \return Retorna un puntero a NULL si los parametros recibidos son NULL o si no se logró crear una lista filtrada.
+ * 				   Retorna un puntero a la lista filtrada si ok.
+ *
+ */
+LinkedList* ll_filter(LinkedList* this, int (*pFuncFilterBy)(void*)) //NUEVO
+{
+	LinkedList* filteredList = NULL; //Lista filtrada
+	int indexListOriginal;
+	void* pElement = NULL;
+	if(this != NULL && pFuncFilterBy != NULL)
+	{
+		filteredList = ll_newLinkedList();
+		if(filteredList != NULL)
+		{
+			for(indexListOriginal=0; indexListOriginal<this->size; indexListOriginal++)
+			{
+				pElement = ll_get(this,indexListOriginal);
+				if(pFuncFilterBy(pElement))
+				{
+					ll_add(filteredList,pElement);
+				}
+			}
+		}
+	}
+	return filteredList;
+}
+
+/**
+ * \brief Recorre una lista, realizando un conteo por cada elemento que cumpla con un criterio.
+ *
+ * \param this Puntero al espacio de memoria donde se empieza la lista.
+ * \param pFuncCountBy Puntero al espacio de memoria donde comienza el código de dicha función que realiza un conteo por cada elemento que cumpla con un criterio.
+ * \return Retorna -1 si los parametros recibidos son NULL, retorna una valor entero mayor o igual a 0 si ok.
+ *
+ */
+int ll_count(LinkedList* this, int (*pFuncCountBy)(void*)) //NUEVO
+{
+	int respuesta = -1;
+	void* pElement = NULL;
+	int indexList;
+	int contador = 0;
+	if(this != NULL && pFuncCountBy != NULL)
+	{
+		for(indexList=0; indexList<this->size; indexList++)
+		{
+			pElement = ll_get(this,indexList);
+			if(pFuncCountBy(pElement))
+			{
+				contador++;
+			}
+		}
+		respuesta = contador;
+	}
+	return respuesta;
+}
+
+/**
+ * \brief Recorre una lista y por cada elemento realiza la acumulación de un valor Int que cumpla con un criterio.
+ *
+ * \param this Puntero al espacio de memoria donde se empieza la lista.
+ * \param pFuncAccumulateBy Puntero al espacio de memoria donde comienza el código de dicha función que acumula un valor por cada elemento que cumpla con un criterio.
+ * \return Retorna -1 si los parametros recibidos son NULL, retorna un valor mayor o igual a 0 el cual representa el valor acumulado.
+ *
+ */
+int ll_accumulatorInt(LinkedList* this, int (*pFuncAccumulateBy)(void* ,int )) //NUEVO
+{
+	int respuesta = -1;
+	int indexElement;
+	void* pElement = NULL;
+	int value = 0;
+	int accumulatedValue = 0;
+	if(this != NULL && pFuncAccumulateBy != NULL)
+	{
+		for(indexElement=0; indexElement<this->size; indexElement++)
+		{
+			pElement = ll_get(this,indexElement);
+			value = pFuncAccumulateBy(pElement,accumulatedValue);
+			accumulatedValue = accumulatedValue + value;
+		}
+		respuesta = accumulatedValue;
+	}
+	return respuesta;
+}
+
+/**
+ * \brief Recorre una lista, para reducirla a un solo elemento el cual cumple con un criterio.
+ *
+ * \param this Puntero al espacio de memoria donde se empieza la lista.
+ * \param pFuncReduceBy Puntero al espacio de memoria donde comienza el código de dicha función que reduce la lista cumpliendo con un criterio.
+ * \return Retorna un puntero a NULL si los parametros recibidos son NULL, retorna un puntero al elemento reducido.
+ *
+ */
+void* ll_reduceInt(LinkedList* this, int (*pFuncReduceBy)(void* ,int ,int ))
+{
+	int indexList;
+	void* pElement = NULL;
+	void* pElementReduced = NULL;
+	int valueReduced = 0;
+	int value = 0;
+	if(this != NULL && pFuncReduceBy != NULL)
+	{
+		for(indexList=0; indexList<this->size; indexList++)
+		{
+			pElement = ll_get(this,indexList);
+			value = pFuncReduceBy(pElement,valueReduced,indexList);
+			if(value > valueReduced)
+			{
+				valueReduced = value;
+				pElementReduced = pElement;
+			}
+		}
+	}
+	return pElementReduced;
 }
