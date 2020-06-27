@@ -94,19 +94,19 @@ int main(void)
 								printf("\nSE MODIFICÓ DATO DE CLIENTE EXITOSAMENTE.\n");
 								break;
 							case -1:
-								printf("\nERROR. LOS PARÁMETROS NO SON VÁLIDOS.\n");
+								printf("\nERROR. INGRESO INVÁLIDO AL MODIFICAR.\n");
 								break;
 							case -2:
-								printf("\nERROR. DEBE CARGAR AL MENOS UN EMPLEADO.\n");
+								printf("\nERROR. LOS PARÁMETROS NO SON VÁLIDOS.\n");
 								break;
 							case -3:
-								printf("\nERROR. SE INGRESÓ UN ID INVÁLIDO.\n");
+								printf("\nERROR. DEBE CARGAR AL MENOS UN EMPLEADO.\n");
 								break;
 							case -4:
-								printf("\nERROR. NO EXISTE EL ID INGRESADO.\n");
+								printf("\nERROR. SE INGRESÓ UN ID INVÁLIDO.\n");
 								break;
 							case -5:
-								printf("\nSE ACABARON SUS REINTENTOS. INGRESO INVALIDO.\n");
+								printf("\nERROR. NO EXISTE EL ID INGRESADO.\n");
 								break;
 						}
 						break;

@@ -1,7 +1,7 @@
 /*
  * utn.c
  *
- *  Created on: 30 abr. 2020
+ *  Created on: 30 may. 2020
  *      Author: Usuario
  */
 
@@ -12,8 +12,6 @@
 static int getString(char* cadena,int longitud);
 static int getInt(int* pResultado);
 static int esNumerica(char* cadena,int limite);
-static int getFloat(float* pResultado);
-static int esFlotante(char* cadena,int limite);
 static int getNombre(char* pResultado,int longitud);
 static int esNombre(char* cadena,int longitud);
 
@@ -51,12 +49,13 @@ static int getString(char* cadena, int longitud)
 	return retorno;
 }
 /**
- * \brief utn_getNumero Solicita el ingreso de un número al usuario y luego de verificarlo devuelve un resultado.
+ * \brief utn_getNumero Solicita un número al usuario y luego de verificarlo devuelve un resultado.
  * \param pResultado Puntero al espacio de memoria donde se guardará el número verificado.
  * \param mensaje Es el mensaje a ser mostrado por pantalla.
  * \param mensajeError Es el mensaje de error a ser mostrado por pantalla.
  * \param minimo Es el número maximo del rango de valores aceptados.
  * \param maximo Es el mínimo del rango de valores a ser aceptados.
+ * \param reintentos Cantidad de reintentos
  * \return Retorna 0 si se obtuvo el numero y -1 si no.
  *
  */
@@ -126,94 +125,6 @@ static int esNumerica(char* cadena, int limite)
 			{
 				retorno = 0;
 				break;
-			}
-		}
-	}
-	return retorno;
-}
-/**
- * \brief Solicita un numero flotante al usuario, luego de verificarlo devuelve el resultado
- * \param pResultado Puntero al espacio de memoria donde se dejara el resultado de la funcion
- * \param mensaje Es el mensaje a ser mostrado
- * \param mensajeError Es el mensaje de Error a ser mostrado
- * \param minimo Es el numero maximo a ser aceptado
- * \param maximo Es el minimo minimo a ser aceptado
- * \return Retorna 0 si se obtuvo el numero flotante y -1 si no
- *
- */
-int utn_getNumeroFlotante(float* pResultado, char* mensaje, char* mensajeError, float minimo, float maximo, int reintentos)
-{
-	float bufferFloat;
-	int retorno = -1;
-	while(reintentos >= 0)
-	{
-		reintentos--;
-		printf("%s",mensaje);
-		if( getFloat(&bufferFloat) == 0 &&
-			bufferFloat >= minimo &&
-			bufferFloat <= maximo )
-		{
-			*pResultado = bufferFloat;
-			retorno = 0;
-			break;
-		}
-		printf("%s",mensajeError);
-	}
-	return retorno;
-}
-/**
- * \brief Verifica si la cadena ingresada es flotante
- * \param pResultado Puntero al espacio de memoria donde se dejara el resultado de la funcion
- * \return Retorna 0 (EXITO) si se obtiene un numero flotante y -1 (ERROR) si no
- *
- */
-static int getFloat(float* pResultado)
-{
-    int retorno = -1;
-    char bufferFloat[64];
-
-    if(pResultado != NULL)
-    {
-    	if( getString(bufferFloat,sizeof(bufferFloat)) == 0 &&
-    		esFlotante(bufferFloat,sizeof(bufferFloat)) )
-    	{
-			*pResultado = atof(bufferFloat);
-			retorno = 0;
-		}
-    }
-    return retorno;
-}
-/**
- * \brief Verifica si la cadena ingresada es numero flotante
- * \param cadena Cadena de caracteres a ser analizada
- * \return Retorna 1 (vardadero) si la cadena es numero flotante y 0 (falso) si no lo es
- *
- */
-static int esFlotante(char* cadena,int limite)
-{
-	int i;
-	int retorno = -1;
-	int contadorPuntos = 0;
-
-	if(cadena != NULL && limite > 0)
-	{
-		for(i=0 ; cadena[i] != '\0' && i < limite; i++)
-		{
-			if(i == 0 && (cadena[i] == '-' || cadena[i] == '+'))
-			{
-				continue;
-			}
-			if(cadena[i] < '0' || cadena[i] > '9')
-			{
-				if(cadena[i] == '.' && contadorPuntos == 0)
-				{
-					contadorPuntos++;
-				}
-				else
-				{
-					retorno = 0;
-					break;
-				}
 			}
 		}
 	}
@@ -304,9 +215,7 @@ static int esNombre(char* cadena,int longitud)
 				cadena[i] != 'í' &&
 				cadena[i] != 'ó' &&
 				cadena[i] != 'ú' &&
-				cadena[i] != '´' &&
-				cadena[i] != '-' &&
-				cadena[i] != ' ')
+				cadena[i] != '´' )
 			{
 				retorno = 0;
 				break;

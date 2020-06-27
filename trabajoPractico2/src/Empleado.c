@@ -4,22 +4,23 @@
  *  Created on: 28 abr. 2020
  *      Author: Usuario
  */
-
-#include "Empleado.h"
-#include "utn.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "Empleado.h"
+#include "utn.h"
+
+static int emp_modifyEmployeeData(Empleado array[], int indice);
 
 /**
  * \brief Inicializa el array de empleados
+ *
  * \param array Puntero al espacio de memoria donde comienza el array a ser actualizado
  * \param limite Tamaño del array a ser actualizado
  * \return Retorna 0 (EXITO) y -1 (ERROR)
  *
  */
-int emp_initEmployees(Empleado* array,int limite)
+int emp_initEmployees(Empleado array[], int limite)
 {
 	int respuesta = -1;
 	int i;
@@ -35,12 +36,13 @@ int emp_initEmployees(Empleado* array,int limite)
 }
 /**
  * \brief Busca la primer posicion disponible del array
+ *
  * \param array Puntero al espacio de memoria donde comienza el array a ser actualizado
  * \param limite Tamaño del array a ser actualizado
  * \return Retorna el indice de la posicion vacia, -1 (ERROR)
  *
  */
-int emp_getEmptyIndex(Empleado* array,int limite)
+int emp_getEmptyIndex(Empleado array[], int limite)
 {
 	int respuesta = -1;
 	int i;
@@ -59,34 +61,38 @@ int emp_getEmptyIndex(Empleado* array,int limite)
 }
 /**
  * \brief Da de alta un emplado en una posicion del array
+ *
  * \param array Puntero al espacio de memoria donde comienza el array a ser actualizado
  * \param limite Tamaño del array a ser actualizado
  * \param indice Posicion a ser actualizada
  * \param id Identificador a ser asignado al empleado
- * \return Retorna 0 (EXITO) y -1 (ERROR)
+ * \return Retorna 0 si se agregó un nuevo empleado a la lista,
+ * 				   -1 si los parametros recibidos no son válidos,
+ * 				   -2 si no hay lugar disponible para agregar un empleado,
+ * 				   -3 si se ingresó al menos un dato inválido.
  *
  */
-int emp_addEmployee(Empleado* array,int limite,int* idEmpleado)
+int emp_addEmployee(Empleado array[], int limite, int* idEmpleado)
 {
 	int respuesta = -1; //valor de retorno si los parametros recibidos no son válidos
-	int auxiliarIndice;
+	int indexNewEmployee;
 	Empleado auxiliarEmpleado;
 	if(array != NULL && limite > 0)
 	{
 		respuesta = -2; //valor de retorno si no hay lugar disponible para agregar un empleado
-		auxiliarIndice = emp_getEmptyIndex(array,limite);
-		if(auxiliarIndice != -1)
+		indexNewEmployee = emp_getEmptyIndex(array,limite);
+		if(indexNewEmployee != -1)
 		{
 			respuesta = -3; //valor de retorno si se ingresó al menos un dato inválido
-			if(	!utn_getNombre(auxiliarEmpleado.nombre, NOMBRE_LEN, "Ingrese nombre: \n", "\nNOMBRE INVALIDO. ",2) &&
-				!utn_getApellido(auxiliarEmpleado.apellido,APELLIDO_LEN,"Ingrese apellido: \n","\nAPELLIDO NO VALIDO. ",2) &&
-				!utn_getNumeroFlotante(&auxiliarEmpleado.salario,"Ingrese salario: \n","\nSALARIO INVALIDO. ",15000.00,32767.00,2) &&
-				!utn_getNumero(&auxiliarEmpleado.sector,"Ingrese sector: \n","\nSECTOR INVALIDO. ",1,20,2) )
+			if(	!utn_getNombre(auxiliarEmpleado.nombre, NOMBRE_LEN, "Ingrese nombre: ", "\n\nINGRESO INVALIDO. ",2) &&
+				!utn_getNombre(auxiliarEmpleado.apellido,APELLIDO_LEN,"Ingrese apellido: ","\n\nINGRESO NO VALIDO. ",2) &&
+				!utn_getNumeroFlotante(&auxiliarEmpleado.salario,"Ingrese salario: ","\n\nINGRESO INVALIDO. ",15000.00,32767.00,2) &&
+				!utn_getNumero(&auxiliarEmpleado.sector,"Ingrese sector: ","\n\nINGRESO INVALIDO. ",1,20,2) )
 			{
 				respuesta = 0; //valor de retorno si se agregó un empleado
 				auxiliarEmpleado.isEmpty = 0;
 				auxiliarEmpleado.id = *idEmpleado;
-				array[auxiliarIndice] = auxiliarEmpleado;
+				array[indexNewEmployee] = auxiliarEmpleado;
 				(*idEmpleado)++;
 			}
 		}
@@ -95,84 +101,78 @@ int emp_addEmployee(Empleado* array,int limite,int* idEmpleado)
 }
 /**
  * \brief Actualiza dato de un empleado en una posicion del array
+ *
  * \param array Puntero al espacio de memoria donde comienza el array a ser actualizado
  * \param limite Tamaño del array de empleados
  * \param indice Posición a ser actualizada
- * \return Retorna 0 (EXITO) y -1 (ERROR)
+ * \return Retorna 0 si se modificó dato con éxito,
+ * 				   -1 si hubo un ingreso inválido o los parametros no son válidos,
+ * 				   -2 si los parametros recibidos no son válidos,
+ * 				   -3 si no hay empleados cargados,
+ * 				   -4 si se ingreso id invalido,
+ * 				   -5 si no existe el id ingresado.
  *
  */
-int emp_modifyEmployee(Empleado* array,int limite,int proximoId)
+int emp_modifyEmployee(Empleado array[], int limite, int proximoId)
 {
-	int respuesta = -1; //valor de retorno si los parametros recibidos no son válidos
+	int respuesta = -2; //valor de retorno si los parametros recibidos no son válidos
 	int auxiliarId;
 	int auxiliarIndice;
-	int opcion;
 	if(array != NULL && limite > 0 && proximoId >= 0)
 	{
-		respuesta = -2; //valor de retorno si no hay empleados cargados
+		respuesta = -3; //valor de retorno si no hay empleados cargados
 		if(!emp_findLoadedEmployees(array,limite))
 		{
-			respuesta = -3; //valor de retorno si hubo un ingreso de id invalido
-			if(!utn_getNumero(&auxiliarId,"Ingrese ID de empleado: \n","\nID INVALIDO. ",0,proximoId,2))
+			respuesta = -4; //valor de retorno si se ingreso id invalido
+			if(!utn_getNumero(&auxiliarId,"Ingrese ID de empleado: ","\n\nINGRESO INVALIDO. ",0,proximoId,2))
 			{
-				respuesta = -4; //valor de retorno si no existe el id ingresado
+				respuesta = -5; //valor de retorno si no existe el id ingresado
 				auxiliarIndice = emp_findEmployeeById(array,limite,auxiliarId);
 				if(auxiliarIndice != -1)
 				{
-					do
-					{
-						if(!utn_getNumero(&opcion,"Ingrese opción para modificar dato:\n"
-												  "1) Nombre\n"
-												  "2) Apellido\n"
-												  "3) Salario\n"
-												  "4) Sector\n","\nOPCION INVALIDA. ",1,4,2) )
-						{
-							switch(opcion)
-							{
-								case 1:
-									if(!utn_getNombre(array[auxiliarIndice].nombre, NOMBRE_LEN, "Modifique nombre: \n", "\nNOMBRE INVALIDO. ",2))
-									{
-										respuesta = 0; //valor de retorno si se modifico dato con éxito
-									}
-									else
-									{
-										respuesta = -5; //valor de retorno si se ingresó dato invalido al querer modificar
-									}
-									break;
-								case 2:
-									if(!utn_getApellido(array[auxiliarIndice].apellido,APELLIDO_LEN,"Modifique apellido: \n","\nAPELLIDO INVALIDO. ",2))
-									{
-										respuesta = 0;
-									}
-									else
-									{
-										respuesta = -5;
-									}
-									break;
-								case 3:
-									if(!utn_getNumeroFlotante(&array[auxiliarIndice].salario,"Modifique salario: \n","\nSALARIO INVALIDO. ",15000.00,32767.00,2))
-									{
-										respuesta = 0;
-									}
-									else
-									{
-										respuesta = -5;
-									}
-									break;
-								case 4:
-									if(!utn_getNumero(&array[auxiliarIndice].sector,"Ingrese sector: \n","\nSECTOR INVALIDO. ",1,20,2))
-									{
-										respuesta = 0;
-									}
-									else
-									{
-										respuesta = -5;
-									}
-									break;
-							}
-						}
-					}while(opcion < 1 || opcion > 4);
+					respuesta = emp_modifyEmployeeData(array,auxiliarIndice); //retorna 0 si OK, -1 si hubo un ingreso invalido
 				}
+			}
+		}
+	}
+	return respuesta;
+}
+
+/**
+ * \brief Modifica un dato a elección de un empleado de la lista.
+ *
+ * \param array Puntero al espacio de memoria donde comienza el array a ser actualizado.
+ * \param indice Valor entero que representa al indice de la lista a actualizar.
+ * \return Retorna -1 si hubo un ingreso inválido o los parametros no son válidos,
+ * 				   0 si se modificó dato con éxito.
+ *
+ */
+static int emp_modifyEmployeeData(Empleado array[], int indice)
+{
+	int respuesta = -1; //valor de retorno si hubo un ingreso inválido o los parametros no son válidos
+	int opcion;
+	if(array != NULL && indice >= 0)
+	{
+		if(!utn_getNumero(&opcion,"\n1) Nombre\n"
+								  "2) Apellido\n"
+								  "3) Salario\n"
+								  "4) Sector\n"
+								  "Ingrese opción para modificar dato: ","\n\nOPCION INVALIDA. ",1,4,2) )
+		{
+			switch(opcion)
+			{
+				case 1:
+					respuesta = utn_getNombre(array[indice].nombre, NOMBRE_LEN, "Modifique nombre: \n", "\nNOMBRE INVALIDO. ",2);
+					break;
+				case 2:
+					respuesta = utn_getNombre(array[indice].apellido,APELLIDO_LEN,"Modifique apellido: \n","\nAPELLIDO INVALIDO. ",2);
+					break;
+				case 3:
+					respuesta = utn_getNumeroFlotante(&array[indice].salario,"Modifique salario: \n","\nSALARIO INVALIDO. ",15000.00,32767.00,2);
+					break;
+				case 4:
+					respuesta = utn_getNumero(&array[indice].sector,"Ingrese sector: \n","\nSECTOR INVALIDO. ",1,20,2);
+					break;
 			}
 		}
 	}
@@ -180,12 +180,13 @@ int emp_modifyEmployee(Empleado* array,int limite,int proximoId)
 }
 /**
  * \brief Busca y verifica que haya cargado al menos un empleado en el array
+ *
  * \param array Puntero a espacio de memoria donde comienza el array a analizar
  * \param limite Tamaño del array a analizar
  * \return Retorna 0 si logró encontra al menos un empleado cargado, -1 si no.
  *
  */
-int emp_findLoadedEmployees(Empleado* array,int limite)
+int emp_findLoadedEmployees(Empleado array[], int limite)
 {
 	int respuesta = -1;
 	int i;
@@ -204,13 +205,14 @@ int emp_findLoadedEmployees(Empleado* array,int limite)
 }
 /**
  * \brief Busca y verifica si existe o no un ID en un array
+ *
  * \param array Array de empleados a ser analizado
  * \param limite Tamaño del array de empleados
  * \param valorBuscado valor del ID a ser buscado
  * \return Return Retorna el indice donde se encuentra el valor buscado, (-1) si no encuentra el valor buscado
  *
  */
-int emp_findEmployeeById(Empleado* array,int limite,int valorBuscado)
+int emp_findEmployeeById(Empleado array[], int limite, int valorBuscado)
 {
     int retorno = -1;
     int i;
@@ -230,13 +232,14 @@ int emp_findEmployeeById(Empleado* array,int limite,int valorBuscado)
 }
 /**
  * \brief Da de baja a un empleado en una posicion del array
+ *
  * \param array Puntero a espacio de memoria donde comienza el array a ser actualizado
  * \param limite Tamaño del array de empleados
  * \param indice Posición a ser actualizada
  * \return Retorna 0 (EXITO) y -1 (ERROR)
  *
  */
-int emp_removeEmployee(Empleado* array,int limite,int proximoId)
+int emp_removeEmployee(Empleado array[], int limite, int proximoId)
 {
 	int respuesta = -1; //valor de retorno si los parámetros recibidos son invalidos
 	int auxiliarId;
@@ -370,10 +373,10 @@ int emp_calculateEmployeesExceedAverageSalary(Empleado* array,int limite,float p
  * \return Retorna 0 (EXITO) y -1 (ERROR)
  *
  */
-int emp_altaArrayDebug(Empleado* array,int limite,int indice,int* idEmpleado,char* nombre,char* apellido,float salarioEmpleado,int sectorEmpleado)
+int emp_altaArrayDebug(Empleado* array, int limite, int indice, int* idEmpleado, char* nombre, char* apellido, float salarioEmpleado, int sectorEmpleado)
 {
 	int respuesta = -1;
-	if(array!=NULL && limite>0 && indice<limite && nombre!=NULL && apellido!=NULL && salarioEmpleado > 0 && sectorEmpleado > 0)
+	if(array != NULL && limite > 0 && indice < limite && nombre != NULL && apellido != NULL && salarioEmpleado > 0 && sectorEmpleado > 0)
 	{
 		respuesta = 0;
 		strncpy(array[indice].nombre,nombre,NOMBRE_LEN);
